@@ -3,7 +3,7 @@
 #include <cstring>
 #include <algorithm>
 using namespace std;
-#define MAXN 3000100
+#define MAXN 2000100
 int p[MAXN];
 string pre(const string &str)
 {
