@@ -3,48 +3,61 @@
 #include <cstring>
 #include <algorithm>
 using namespace std;
-#define MAXN 2000100
-int p[MAXN];
-string pre(const string &str)
+struct Node
 {
-	string s;
-	s.push_back('$');
-	s.push_back('#');
-	for(int i = 0; i < str.length(); i++)
-	{
-		s.push_back(str[i]);
-		s.push_back('#');
-	}
-	s.push_back('^');
-	return s;
+	int cnt;
+	Node *ch[26];
+	Node() { memset(ch, 0, sizeof(ch)); cnt = 0; }
+}*root;
+void Insert(const string &str)
+{
+	Node *current, *newnode;
+	int len = str.length();
+	current = root;
+	for (int i = 0; i < len; i++)
+		if (current->ch[str[i] - 'a'] != NULL)
+		{
+			current = current->ch[str[i] - 'a'];
+			current->cnt++;
+		}
+		else
+		{
+			newnode = new Node();
+			current->ch[str[i] - 'a'] = newnode;
+			current = current->ch[str[i] - 'a'];
+			current->cnt = 1;
+		}
+}
+int Find(const string &str)
+{
+	Node *current;
+	int len = str.length();
+	if (len == 0)
+		return 0;
+	current = root;
+	for (int i = 0; i < len; i++)
+		if (current->ch[str[i] - 'a'] != NULL)
+			current = current->ch[str[i] - 'a'];
+		else
+			return 0;
+	return current->cnt;
 }
 int main()
 {
-	int cnt;
-	cin >> cnt;
-	string str;
-	while(cnt--)
+	int cntd = 0, cntq = 0;
+	cin >> cntd;
+	string s;
+	root = new Node();
+	for(int i = 0; i < cntd; i++)
 	{
-		cin >> str;
-		string s = pre(str);
-		memset(p, 0, sizeof(p));
-		int mx = 0, id = 0;
-		for(int i = 1; s[i] != '\0'; i++)
-		{
-			p[i] = mx > i ? min(p[(id << 1) - i], mx - i) : 1;
-			while (s[i + p[i]] == s[i - p[i]])
-				p[i]++;
-			if(i + p[i] > mx)
-			{
-				mx = i + p[i];
-				id = i;
-			}
-		}
-		int ans = 0;
-		for (int i = 0; i < MAXN; i++)
-			if (p[i] > ans)
-				ans = p[i];
-		cout << ans - 1 << endl;
+		cin >> s;
+		Insert(s);
+	}
+	cin >> cntq;
+	for(int i = 0; i < cntq; i++)
+	{
+		cin >> s;
+		cout << Find(s) << endl;
 	}
 	system("pause");
 	return 0;
